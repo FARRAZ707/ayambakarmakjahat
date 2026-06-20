@@ -1,0 +1,709 @@
+import { Colors } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+import { Ionicons } from "@expo/vector-icons";
+import React, { useState } from "react";
+import {
+    FlatList,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Switch,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from "react-native";
+
+interface LogEntry {
+  id: string;
+  sensorName: string;
+  value: number;
+  unit: string;
+  timestamp: string;
+  status: "success" | "error" | "pending";
+}
+
+interface DataLoggerProps {
+  onBackPress?: () => void;
+}
+
+export function DataLogger({ onBackPress }: DataLoggerProps) {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
+  const colors = Colors[colorScheme ?? "light"];
+
+  const [autoSync, setAutoSync] = useState(true);
+  const [loggingEnabled, setLoggingEnabled] = useState(true);
+  const [syncInterval, setSyncInterval] = useState("30");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Sample log data
+  const [logEntries] = useState<LogEntry[]>([
+    {
+      id: "1",
+      sensorName: "Temperature",
+      value: 27.5,
+      unit: "°C",
+      timestamp: "2024-06-20 17:45:00",
+      status: "success",
+    },
+    {
+      id: "2",
+      sensorName: "Humidity",
+      value: 65,
+      unit: "%",
+      timestamp: "2024-06-20 17:44:58",
+      status: "success",
+    },
+    {
+      id: "3",
+      sensorName: "Light Intensity",
+      value: 850,
+      unit: "lux",
+      timestamp: "2024-06-20 17:44:55",
+      status: "pending",
+    },
+    {
+      id: "4",
+      sensorName: "Air Quality",
+      value: 42,
+      unit: "AQI",
+      timestamp: "2024-06-20 17:44:52",
+      status: "success",
+    },
+    {
+      id: "5",
+      sensorName: "Temperature",
+      value: 27.3,
+      unit: "°C",
+      timestamp: "2024-06-20 17:44:30",
+      status: "success",
+    },
+  ]);
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "success":
+        return "#4caf50";
+      case "error":
+        return "#f44336";
+      case "pending":
+        return "#ff9800";
+      default:
+        return "#999999";
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "success":
+        return "checkmark-circle";
+      case "error":
+        return "close-circle";
+      case "pending":
+        return "time";
+      default:
+        return "help-circle";
+    }
+  };
+
+  const renderLogItem = ({ item }: { item: LogEntry }) => (
+    <View
+      style={[
+        styles.logItem,
+        {
+          backgroundColor: isDark ? "#222222" : "#ffffff",
+          borderColor: isDark ? "#333333" : "#e0e0e0",
+        },
+      ]}
+    >
+      <View style={styles.logContent}>
+        <View style={styles.logHeader}>
+          <Text
+            style={[
+              styles.sensorName,
+              {
+                color: isDark ? "#e0e0e0" : "#333333",
+              },
+            ]}
+          >
+            {item.sensorName}
+          </Text>
+          <Ionicons
+            name={getStatusIcon(item.status) as any}
+            size={18}
+            color={getStatusColor(item.status)}
+          />
+        </View>
+        <View style={styles.logDetails}>
+          <Text
+            style={[
+              styles.logValue,
+              {
+                color: colors.tint,
+              },
+            ]}
+          >
+            {item.value} {item.unit}
+          </Text>
+          <Text
+            style={[
+              styles.logTimestamp,
+              {
+                color: isDark ? "#999999" : "#666666",
+              },
+            ]}
+          >
+            {item.timestamp}
+          </Text>
+        </View>
+      </View>
+    </View>
+  );
+
+  return (
+    <SafeAreaView
+      style={[
+        styles.container,
+        {
+          backgroundColor: isDark ? "#0a0a0a" : "#f5f5f5",
+        },
+      ]}
+    >
+      {/* Header */}
+      <View
+        style={[
+          styles.header,
+          {
+            backgroundColor: isDark ? "#1a1a1a" : "#ffffff",
+            borderBottomColor: isDark ? "#333333" : "#e0e0e0",
+          },
+        ]}
+      >
+        <TouchableOpacity onPress={onBackPress}>
+          <Ionicons
+            name="chevron-back"
+            size={28}
+            color={isDark ? "#ffffff" : "#000000"}
+          />
+        </TouchableOpacity>
+        <Text
+          style={[
+            styles.headerTitle,
+            {
+              color: isDark ? "#ffffff" : "#000000",
+            },
+          ]}
+        >
+          Data Logger
+        </Text>
+        <TouchableOpacity>
+          <Ionicons
+            name="more-vertical"
+            size={24}
+            color={isDark ? "#ffffff" : "#000000"}
+          />
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.content}>
+          {/* Settings Section */}
+          <View
+            style={[
+              styles.section,
+              {
+                backgroundColor: isDark ? "#1a1a1a" : "#ffffff",
+                borderColor: isDark ? "#333333" : "#e0e0e0",
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.sectionTitle,
+                {
+                  color: isDark ? "#ffffff" : "#000000",
+                },
+              ]}
+            >
+              Settings
+            </Text>
+
+            {/* Logging Toggle */}
+            <View style={styles.settingRow}>
+              <View style={styles.settingLeft}>
+                <Ionicons
+                  name="radio-button-on"
+                  size={20}
+                  color={colors.tint}
+                  style={styles.settingIcon}
+                />
+                <View>
+                  <Text
+                    style={[
+                      styles.settingLabel,
+                      {
+                        color: isDark ? "#e0e0e0" : "#333333",
+                      },
+                    ]}
+                  >
+                    Data Logging
+                  </Text>
+                  <Text
+                    style={[
+                      styles.settingDesc,
+                      {
+                        color: isDark ? "#999999" : "#666666",
+                      },
+                    ]}
+                  >
+                    Record sensor readings
+                  </Text>
+                </View>
+              </View>
+              <Switch
+                value={loggingEnabled}
+                onValueChange={setLoggingEnabled}
+                trackColor={{ false: "#ccc", true: colors.tint }}
+              />
+            </View>
+
+            {/* Auto Sync Toggle */}
+            <View style={styles.settingRow}>
+              <View style={styles.settingLeft}>
+                <Ionicons
+                  name="cloud-upload"
+                  size={20}
+                  color={colors.tint}
+                  style={styles.settingIcon}
+                />
+                <View>
+                  <Text
+                    style={[
+                      styles.settingLabel,
+                      {
+                        color: isDark ? "#e0e0e0" : "#333333",
+                      },
+                    ]}
+                  >
+                    Auto Sync to Cloud
+                  </Text>
+                  <Text
+                    style={[
+                      styles.settingDesc,
+                      {
+                        color: isDark ? "#999999" : "#666666",
+                      },
+                    ]}
+                  >
+                    Sync with Firebase Firestore
+                  </Text>
+                </View>
+              </View>
+              <Switch
+                value={autoSync}
+                onValueChange={setAutoSync}
+                trackColor={{ false: "#ccc", true: colors.tint }}
+              />
+            </View>
+
+            {/* Sync Interval */}
+            {autoSync && (
+              <View style={styles.settingRow}>
+                <View style={styles.settingLeft}>
+                  <Ionicons
+                    name="timer"
+                    size={20}
+                    color={colors.tint}
+                    style={styles.settingIcon}
+                  />
+                  <Text
+                    style={[
+                      styles.settingLabel,
+                      {
+                        color: isDark ? "#e0e0e0" : "#333333",
+                      },
+                    ]}
+                  >
+                    Sync Interval (seconds)
+                  </Text>
+                </View>
+                <TextInput
+                  style={[
+                    styles.intervalInput,
+                    {
+                      backgroundColor: isDark ? "#2a2a2a" : "#f0f0f0",
+                      color: isDark ? "#ffffff" : "#000000",
+                      borderColor: isDark ? "#444444" : "#d0d0d0",
+                    },
+                  ]}
+                  value={syncInterval}
+                  onChangeText={setSyncInterval}
+                  keyboardType="numeric"
+                  placeholder="30"
+                  placeholderTextColor={isDark ? "#777777" : "#cccccc"}
+                />
+              </View>
+            )}
+          </View>
+
+          {/* Stats Section */}
+          <View style={styles.statsSection}>
+            <View
+              style={[
+                styles.statItem,
+                {
+                  backgroundColor: isDark ? "#1a2a3a" : "#e3f2fd",
+                  borderColor: isDark ? "#2a4a6a" : "#90caf9",
+                },
+              ]}
+            >
+              <Ionicons name="document-text" size={32} color={colors.tint} />
+              <Text
+                style={[
+                  styles.statCount,
+                  {
+                    color: isDark ? "#ffffff" : "#000000",
+                  },
+                ]}
+              >
+                {logEntries.length}
+              </Text>
+              <Text
+                style={[
+                  styles.statLabel,
+                  {
+                    color: isDark ? "#999999" : "#666666",
+                  },
+                ]}
+              >
+                Total Logs
+              </Text>
+            </View>
+
+            <View
+              style={[
+                styles.statItem,
+                {
+                  backgroundColor: isDark ? "#1a3a1a" : "#f1f8e9",
+                  borderColor: isDark ? "#2a6a2a" : "#c5e1a5",
+                },
+              ]}
+            >
+              <Ionicons name="checkmark-circle" size={32} color="#4caf50" />
+              <Text
+                style={[
+                  styles.statCount,
+                  {
+                    color: isDark ? "#ffffff" : "#000000",
+                  },
+                ]}
+              >
+                {logEntries.filter((l) => l.status === "success").length}
+              </Text>
+              <Text
+                style={[
+                  styles.statLabel,
+                  {
+                    color: isDark ? "#999999" : "#666666",
+                  },
+                ]}
+              >
+                Synced
+              </Text>
+            </View>
+
+            <View
+              style={[
+                styles.statItem,
+                {
+                  backgroundColor: isDark ? "#3a1a1a" : "#ffe0b2",
+                  borderColor: isDark ? "#6a2a2a" : "#ffb74d",
+                },
+              ]}
+            >
+              <Ionicons name="time" size={32} color="#ff9800" />
+              <Text
+                style={[
+                  styles.statCount,
+                  {
+                    color: isDark ? "#ffffff" : "#000000",
+                  },
+                ]}
+              >
+                {logEntries.filter((l) => l.status === "pending").length}
+              </Text>
+              <Text
+                style={[
+                  styles.statLabel,
+                  {
+                    color: isDark ? "#999999" : "#666666",
+                  },
+                ]}
+              >
+                Pending
+              </Text>
+            </View>
+          </View>
+
+          {/* Search Bar */}
+          <View
+            style={[
+              styles.searchBar,
+              {
+                backgroundColor: isDark ? "#1a1a1a" : "#ffffff",
+                borderColor: isDark ? "#333333" : "#e0e0e0",
+              },
+            ]}
+          >
+            <Ionicons
+              name="search"
+              size={20}
+              color={isDark ? "#999999" : "#999999"}
+            />
+            <TextInput
+              style={[
+                styles.searchInput,
+                {
+                  color: isDark ? "#ffffff" : "#000000",
+                },
+              ]}
+              placeholder="Search logs..."
+              placeholderTextColor={isDark ? "#666666" : "#cccccc"}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+          </View>
+
+          {/* Logs List */}
+          <Text
+            style={[
+              styles.logsTitle,
+              {
+                color: isDark ? "#ffffff" : "#000000",
+              },
+            ]}
+          >
+            Recent Logs
+          </Text>
+          <FlatList
+            data={logEntries}
+            renderItem={renderLogItem}
+            keyExtractor={(item) => item.id}
+            scrollEnabled={false}
+            style={styles.logsList}
+          />
+
+          {/* Firebase Info */}
+          <View
+            style={[
+              styles.firebaseCard,
+              {
+                backgroundColor: isDark ? "#1a1a3a" : "#f3e5f5",
+                borderColor: isDark ? "#2a2a6a" : "#ce93d8",
+              },
+            ]}
+          >
+            <Ionicons
+              name="logo-firebase"
+              size={24}
+              color={isDark ? "#c084fc" : "#7b1fa2"}
+            />
+            <View style={styles.firebaseContent}>
+              <Text
+                style={[
+                  styles.firebaseTitle,
+                  {
+                    color: isDark ? "#c084fc" : "#7b1fa2",
+                  },
+                ]}
+              >
+                Firebase Integration
+              </Text>
+              <Text
+                style={[
+                  styles.firebaseText,
+                  {
+                    color: isDark ? "#ce93d8" : "#8e24aa",
+                  },
+                ]}
+              >
+                Configure Node.js Admin SDK to connect with Firestore. Use the
+                logs to sync sensor data automatically.
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.bottomPadding} />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    justifyContent: "space-between",
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    flex: 1,
+    textAlign: "center",
+  },
+  scrollView: {
+    flex: 1,
+  },
+  content: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+  },
+  section: {
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    marginBottom: 16,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 16,
+  },
+  settingRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(0,0,0,0.1)",
+  },
+  settingLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+  },
+  settingIcon: {
+    marginRight: 12,
+  },
+  settingLabel: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  settingDesc: {
+    fontSize: 12,
+    marginTop: 2,
+  },
+  intervalInput: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 6,
+    borderWidth: 1,
+    width: 60,
+    textAlign: "center",
+    fontSize: 14,
+  },
+  statsSection: {
+    flexDirection: "row",
+    gap: 12,
+    marginBottom: 16,
+  },
+  statItem: {
+    flex: 1,
+    borderRadius: 12,
+    padding: 16,
+    alignItems: "center",
+    borderWidth: 1,
+  },
+  statCount: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginTop: 8,
+  },
+  statLabel: {
+    fontSize: 11,
+    marginTop: 4,
+  },
+  searchBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    borderWidth: 1,
+    marginBottom: 16,
+  },
+  searchInput: {
+    flex: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    fontSize: 14,
+  },
+  logsTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 12,
+  },
+  logsList: {
+    marginBottom: 16,
+  },
+  logItem: {
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 8,
+    borderWidth: 1,
+  },
+  logContent: {
+    gap: 8,
+  },
+  logHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  sensorName: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  logDetails: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingLeft: 4,
+  },
+  logValue: {
+    fontSize: 13,
+    fontWeight: "bold",
+  },
+  logTimestamp: {
+    fontSize: 11,
+  },
+  firebaseCard: {
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    marginBottom: 16,
+    flexDirection: "row",
+    gap: 12,
+  },
+  firebaseContent: {
+    flex: 1,
+  },
+  firebaseTitle: {
+    fontSize: 14,
+    fontWeight: "bold",
+    marginBottom: 4,
+  },
+  firebaseText: {
+    fontSize: 12,
+    lineHeight: 16,
+  },
+  bottomPadding: {
+    height: 20,
+  },
+});
