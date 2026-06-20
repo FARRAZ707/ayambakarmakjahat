@@ -37,11 +37,11 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
   const [syncInterval, setSyncInterval] = useState("30");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Sample log data
+  // Sample log data - SHT20 & MQ135 Sensors Only
   const [logEntries] = useState<LogEntry[]>([
     {
       id: "1",
-      sensorName: "Temperature",
+      sensorName: "Temperature (SHT20)",
       value: 27.5,
       unit: "°C",
       timestamp: "2024-06-20 17:45:00",
@@ -49,7 +49,7 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
     },
     {
       id: "2",
-      sensorName: "Humidity",
+      sensorName: "Humidity (SHT20)",
       value: 65,
       unit: "%",
       timestamp: "2024-06-20 17:44:58",
@@ -57,26 +57,26 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
     },
     {
       id: "3",
-      sensorName: "Light Intensity",
-      value: 850,
-      unit: "lux",
+      sensorName: "Gas Level (MQ135)",
+      value: 42,
+      unit: "ppm",
       timestamp: "2024-06-20 17:44:55",
-      status: "pending",
+      status: "success",
     },
     {
       id: "4",
-      sensorName: "Air Quality",
-      value: 42,
-      unit: "AQI",
-      timestamp: "2024-06-20 17:44:52",
+      sensorName: "Temperature (SHT20)",
+      value: 27.3,
+      unit: "°C",
+      timestamp: "2024-06-20 17:44:30",
       status: "success",
     },
     {
       id: "5",
-      sensorName: "Temperature",
-      value: 27.3,
-      unit: "°C",
-      timestamp: "2024-06-20 17:44:30",
+      sensorName: "Humidity (SHT20)",
+      value: 64,
+      unit: "%",
+      timestamp: "2024-06-20 17:44:15",
       status: "success",
     },
   ]);

@@ -43,11 +43,11 @@ export function Dashboard({
   const [refreshing, setRefreshing] = useState(false);
   const [activeSensor, setActiveSensor] = useState<string | undefined>();
 
-  // Sample sensor data
+  // Sample sensor data - SHT20 & MQ135 Sensors Only
   const [sensorData] = useState<SensorData[]>([
     {
       id: "1",
-      name: "Temperature",
+      name: "Temperature (SHT20)",
       value: 27.5,
       unit: "°C",
       icon: "thermometer",
@@ -56,7 +56,7 @@ export function Dashboard({
     },
     {
       id: "2",
-      name: "Humidity",
+      name: "Humidity (SHT20)",
       value: 65,
       unit: "%",
       icon: "water",
@@ -65,21 +65,12 @@ export function Dashboard({
     },
     {
       id: "3",
-      name: "Air Quality",
+      name: "Gas Level (MQ135)",
       value: 42,
-      unit: "AQI",
+      unit: "ppm",
       icon: "cloud",
       status: "good",
       lastUpdate: "1 min ago",
-    },
-    {
-      id: "4",
-      name: "Light Intensity",
-      value: 850,
-      unit: "lux",
-      icon: "sunny",
-      status: "warning",
-      lastUpdate: "3 min ago",
     },
   ]);
 
@@ -322,7 +313,7 @@ export function Dashboard({
                     },
                   ]}
                 >
-                  4
+                  3
                 </Text>
                 <Text
                   style={[
@@ -353,7 +344,7 @@ export function Dashboard({
                     },
                   ]}
                 >
-                  1
+                  0
                 </Text>
                 <Text
                   style={[
