@@ -3,13 +3,13 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
-    RefreshControl,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  RefreshControl,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SensorCard } from "./sensor-card";
 import { SensorChart } from "./sensor-chart";
@@ -269,7 +269,7 @@ export function Dashboard({
                 {
                   label: "Temperature",
                   data: temperatureData,
-                  color: () => "#ff6b6b",
+                  color: "#ff6b6b",
                 },
               ]}
               unit="°C"
@@ -283,7 +283,7 @@ export function Dashboard({
                 {
                   label: "Humidity",
                   data: humidityData,
-                  color: () => "#4ecdc4",
+                  color: "#4ecdc4",
                 },
               ]}
               unit="%"

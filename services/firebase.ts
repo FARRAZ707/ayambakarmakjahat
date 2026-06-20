@@ -7,7 +7,7 @@
 
 // Example Firebase Realtime Database URL for reference
 // Replace these with your actual Firebase credentials
-
+//update API KEY
 export const FIREBASE_CONFIG = {
   // Your Firebase configuration object from Firebase Console
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY || "",
