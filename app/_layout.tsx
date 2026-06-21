@@ -30,7 +30,13 @@ export default function RootLayout() {
             {/* --- 2. TAMBAHKAN BARIS SCREEN INDEX DI SINI --- */}
             <Stack.Screen name="index" options={{ headerShown: false }} />
             {/* ----------------------------------------------- */}
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen 
+              name="(tabs)" 
+              options={{ 
+                headerShown: false, 
+                animation: "flip" // <--- Ini kunci transisi halusnya
+              }} 
+            />
             <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
           </Stack>
           
