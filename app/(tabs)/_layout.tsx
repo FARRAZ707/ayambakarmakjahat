@@ -31,7 +31,7 @@ export default function TabLayout() {
         options={{
           title: "Data Logger",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="document.text.fill" color={color} />
+            <IconSymbol size={28} name="doc.text.fill" color={color} />
           ),
         }}
       />

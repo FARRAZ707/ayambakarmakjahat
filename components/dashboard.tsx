@@ -1,7 +1,7 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   RefreshControl,
   SafeAreaView,
@@ -9,11 +9,16 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+<<<<<<< Updated upstream
   View,
+=======
+  View
+>>>>>>> Stashed changes
 } from "react-native";
 import { SensorCard } from "./sensor-card";
 import { SensorChart } from "./sensor-chart";
 import { Sidebar } from "./sidebar";
+import { WarehouseMap } from "./warehouse-map";
 
 // Sample data structure for IoT sensors
 interface SensorData {
@@ -24,6 +29,16 @@ interface SensorData {
   icon: string;
   status: "good" | "warning" | "critical";
   lastUpdate: string;
+  warehouseId: string;
+}
+
+interface Warehouse {
+  id: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+  temperature: number;
+  gas: number;
 }
 
 interface DashboardProps {
@@ -42,42 +57,141 @@ export function Dashboard({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [activeSensor, setActiveSensor] = useState<string | undefined>();
+  const scrollViewRef = useRef<ScrollView>(null);
 
+<<<<<<< Updated upstream
   // Sample sensor data - SHT20 & MQ135 Sensors Only
   const [sensorData] = useState<SensorData[]>([
     {
       id: "1",
       name: "Temperature (SHT20)",
+=======
+  // Warehouse data - 3 lokasi gudang
+  const [warehouses] = useState<Warehouse[]>([
+    {
+      id: "WH1",
+      name: "Gudang Utama",
+      latitude: -6.2088,
+      longitude: 106.8456,
+      temperature: 27.5,
+      gas: 42,
+    },
+    {
+      id: "WH2",
+      name: "Gudang Cabang",
+      latitude: -6.1753,
+      longitude: 106.8249,
+      temperature: 26.8,
+      gas: 38,
+    },
+    {
+      id: "WH3",
+      name: "Gudang Distribusi",
+      latitude: -6.2315,
+      longitude: 106.8762,
+      temperature: 28.2,
+      gas: 45,
+    },
+  ]);
+
+  // Sample sensor data - 6 sensors (3 warehouses × 2 sensors: temperature & gas)
+  const [sensorData] = useState<SensorData[]>([
+    {
+      id: "S1",
+      name: "Suhu Gudang Utama",
+>>>>>>> Stashed changes
       value: 27.5,
       unit: "°C",
       icon: "thermometer",
       status: "good",
       lastUpdate: "2 min ago",
+      warehouseId: "WH1",
     },
     {
+<<<<<<< Updated upstream
       id: "2",
       name: "Humidity (SHT20)",
       value: 65,
       unit: "%",
       icon: "water",
+=======
+      id: "S2",
+      name: "Gas Gudang Utama",
+      value: 42,
+      unit: "ppm",
+      icon: "cloud",
+>>>>>>> Stashed changes
       status: "good",
       lastUpdate: "2 min ago",
+      warehouseId: "WH1",
     },
     {
+<<<<<<< Updated upstream
       id: "3",
       name: "Gas Level (MQ135)",
       value: 42,
+=======
+      id: "S3",
+      name: "Suhu Gudang Cabang",
+      value: 26.8,
+      unit: "°C",
+      icon: "thermometer",
+      status: "good",
+      lastUpdate: "1 min ago",
+      warehouseId: "WH2",
+    },
+    {
+      id: "S4",
+      name: "Gas Gudang Cabang",
+      value: 38,
+>>>>>>> Stashed changes
       unit: "ppm",
       icon: "cloud",
       status: "good",
       lastUpdate: "1 min ago",
+      warehouseId: "WH2",
     },
+<<<<<<< Updated upstream
+=======
+    {
+      id: "S5",
+      name: "Suhu Gudang Distribusi",
+      value: 28.2,
+      unit: "°C",
+      icon: "thermometer",
+      status: "warning",
+      lastUpdate: "3 min ago",
+      warehouseId: "WH3",
+    },
+    {
+      id: "S6",
+      name: "Gas Gudang Distribusi",
+      value: 45,
+      unit: "ppm",
+      icon: "cloud",
+      status: "warning",
+      lastUpdate: "3 min ago",
+      warehouseId: "WH3",
+    },
+>>>>>>> Stashed changes
   ]);
 
-  // Chart data sample
+  // Chart data sample - untuk 3 gudang
   const chartLabels = ["12:00", "13:00", "14:00", "15:00", "16:00", "17:00"];
-  const temperatureData = [22, 23.5, 25, 26, 27, 27.5];
-  const humidityData = [55, 58, 62, 65, 65, 65];
+
+  // Temperature data untuk 3 gudang
+  const warehouseTemperatureData = [
+    [22, 23.5, 25, 26, 27, 27.5], // Gudang Utama
+    [21.5, 23, 24.5, 25.5, 26.2, 26.8], // Gudang Cabang
+    [23, 24.5, 26, 27, 27.8, 28.2], // Gudang Distribusi
+  ];
+
+  // Gas data untuk 3 gudang
+  const warehouseGasData = [
+    [35, 37, 39, 40, 41, 42], // Gudang Utama
+    [32, 34, 35, 36, 37, 38], // Gudang Cabang
+    [38, 40, 42, 43, 44, 45], // Gudang Distribusi
+  ];
 
   const menuItems = [
     {
@@ -86,6 +200,54 @@ export function Dashboard({
       icon: "speedometer",
       onPress: () => {
         setActiveSensor("dashboard");
+        scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+        setSidebarOpen(false);
+      },
+    },
+    {
+      id: "map",
+      label: "Peta Gudang",
+      icon: "map",
+      onPress: () => {
+        setActiveSensor("map");
+        scrollViewRef.current?.scrollToEnd({ animated: true });
+        setSidebarOpen(false);
+      },
+    },
+    {
+      id: "sensors",
+      label: "Sensor Status",
+      icon: "pulse",
+      onPress: () => {
+        setActiveSensor("sensors");
+        if (scrollViewRef.current) {
+          scrollViewRef.current.scrollTo({ y: 350, animated: true });
+        }
+        setSidebarOpen(false);
+      },
+    },
+    {
+      id: "trends",
+      label: "Tren Suhu",
+      icon: "trending-up",
+      onPress: () => {
+        setActiveSensor("trends");
+        if (scrollViewRef.current) {
+          scrollViewRef.current.scrollTo({ y: 900, animated: true });
+        }
+        setSidebarOpen(false);
+      },
+    },
+    {
+      id: "gas",
+      label: "Gas Monitor",
+      icon: "cloud",
+      onPress: () => {
+        setActiveSensor("gas");
+        if (scrollViewRef.current) {
+          scrollViewRef.current.scrollTo({ y: 1600, animated: true });
+        }
+        setSidebarOpen(false);
       },
     },
     {
@@ -95,22 +257,7 @@ export function Dashboard({
       onPress: () => {
         setActiveSensor("data-logger");
         onNavigateToLogger?.();
-      },
-    },
-    {
-      id: "statistics",
-      label: "Statistics",
-      icon: "bar-chart",
-      onPress: () => {
-        setActiveSensor("statistics");
-      },
-    },
-    {
-      id: "alerts",
-      label: "Alerts",
-      icon: "alert-circle",
-      onPress: () => {
-        setActiveSensor("alerts");
+        setSidebarOpen(false);
       },
     },
     {
@@ -120,6 +267,7 @@ export function Dashboard({
       onPress: () => {
         setActiveSensor("settings");
         onNavigateToSettings?.();
+        setSidebarOpen(false);
       },
     },
   ];
@@ -177,7 +325,7 @@ export function Dashboard({
               },
             ]}
           >
-            IoT Dashboard
+            Smart Storage Dashboard
           </Text>
           <Text
             style={[
@@ -205,6 +353,7 @@ export function Dashboard({
 
       {/* Main Content */}
       <ScrollView
+        ref={scrollViewRef}
         style={styles.scrollView}
         refreshControl={
           <RefreshControl
@@ -215,6 +364,21 @@ export function Dashboard({
         }
       >
         <View style={styles.content}>
+          {/* Warehouse Map Section */}
+          <View style={styles.section}>
+            <Text
+              style={[
+                styles.sectionTitle,
+                {
+                  color: isDark ? "#ffffff" : "#000000",
+                },
+              ]}
+            >
+              Lokasi Gudang
+            </Text>
+            <WarehouseMap warehouses={warehouses} />
+          </View>
+
           {/* Status Cards */}
           <View style={styles.section}>
             <Text
@@ -250,16 +414,20 @@ export function Dashboard({
                 },
               ]}
             >
-              Trends
+              Tren Suhu Gudang
             </Text>
 
             <SensorChart
-              title="Temperature Trend"
+              title="Gudang Utama"
               labels={chartLabels}
               datasets={[
                 {
                   label: "Temperature",
+<<<<<<< Updated upstream
                   data: temperatureData,
+=======
+                  data: warehouseTemperatureData[0],
+>>>>>>> Stashed changes
                   color: "#ff6b6b",
                 },
               ]}
@@ -268,16 +436,91 @@ export function Dashboard({
             />
 
             <SensorChart
-              title="Humidity Levels"
+              title="Gudang Cabang"
               labels={chartLabels}
               datasets={[
                 {
+<<<<<<< Updated upstream
                   label: "Humidity",
                   data: humidityData,
+=======
+                  label: "Temperature",
+                  data: warehouseTemperatureData[1],
+>>>>>>> Stashed changes
                   color: "#4ecdc4",
                 },
               ]}
-              unit="%"
+              unit="°C"
+              chartType="line"
+            />
+
+            <SensorChart
+              title="Gudang Distribusi"
+              labels={chartLabels}
+              datasets={[
+                {
+                  label: "Temperature",
+                  data: warehouseTemperatureData[2],
+                  color: "#ffd93d",
+                },
+              ]}
+              unit="°C"
+              chartType="line"
+            />
+          </View>
+
+          {/* Gas Charts Section */}
+          <View style={styles.section}>
+            <Text
+              style={[
+                styles.sectionTitle,
+                {
+                  color: isDark ? "#ffffff" : "#000000",
+                },
+              ]}
+            >
+              Tren Gas Gudang
+            </Text>
+
+            <SensorChart
+              title="Gas - Gudang Utama"
+              labels={chartLabels}
+              datasets={[
+                {
+                  label: "Gas",
+                  data: warehouseGasData[0],
+                  color: "#a78bfa",
+                },
+              ]}
+              unit="ppm"
+              chartType="line"
+            />
+
+            <SensorChart
+              title="Gas - Gudang Cabang"
+              labels={chartLabels}
+              datasets={[
+                {
+                  label: "Gas",
+                  data: warehouseGasData[1],
+                  color: "#f87171",
+                },
+              ]}
+              unit="ppm"
+              chartType="line"
+            />
+
+            <SensorChart
+              title="Gas - Gudang Distribusi"
+              labels={chartLabels}
+              datasets={[
+                {
+                  label: "Gas",
+                  data: warehouseGasData[2],
+                  color: "#60a5fa",
+                },
+              ]}
+              unit="ppm"
               chartType="line"
             />
           </View>
@@ -304,7 +547,7 @@ export function Dashboard({
                   },
                 ]}
               >
-                <Ionicons name="checkmark-circle" size={32} color="#4caf50" />
+                <Ionicons name="storefront" size={32} color="#9c27b0" />
                 <Text
                   style={[
                     styles.statValue,
@@ -314,6 +557,41 @@ export function Dashboard({
                   ]}
                 >
                   3
+                </Text>
+                <Text
+                  style={[
+                    styles.statLabel,
+                    {
+                      color: isDark ? "#999999" : "#666666",
+                    },
+                  ]}
+                >
+                  Warehouses
+                </Text>
+              </View>
+
+              <View
+                style={[
+                  styles.statCard,
+                  {
+                    backgroundColor: isDark ? "#222222" : "#f0f0f0",
+                  },
+                ]}
+              >
+                <Ionicons name="checkmark-circle" size={32} color="#4caf50" />
+                <Text
+                  style={[
+                    styles.statValue,
+                    {
+                      color: isDark ? "#ffffff" : "#000000",
+                    },
+                  ]}
+                >
+<<<<<<< Updated upstream
+                  3
+=======
+                  6
+>>>>>>> Stashed changes
                 </Text>
                 <Text
                   style={[
@@ -344,7 +622,11 @@ export function Dashboard({
                     },
                   ]}
                 >
+<<<<<<< Updated upstream
                   0
+=======
+                  2
+>>>>>>> Stashed changes
                 </Text>
                 <Text
                   style={[
@@ -445,7 +727,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 16,
     borderBottomWidth: 1,
     gap: 12,
   },

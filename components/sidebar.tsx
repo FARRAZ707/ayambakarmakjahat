@@ -3,13 +3,13 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import {
-    Dimensions,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 interface MenuItem {
@@ -45,11 +45,6 @@ export function Sidebar({
 
   return (
     <View style={styles.overlay}>
-      <TouchableOpacity
-        style={styles.backdropTouchable}
-        onPress={onClose}
-        activeOpacity={1}
-      />
       <SafeAreaView
         style={[
           styles.sidebar,
@@ -159,6 +154,11 @@ export function Sidebar({
           </Text>
         </View>
       </SafeAreaView>
+      <TouchableOpacity
+        style={styles.backdropTouchable}
+        onPress={onClose}
+        activeOpacity={1}
+      />
     </View>
   );
 }

@@ -3,24 +3,27 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
-    FlatList,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Switch,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  FlatList,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 interface LogEntry {
   id: string;
+  warehouseName: string;
+  sensorType: "temperature" | "gas";
   sensorName: string;
   value: number;
   unit: string;
   timestamp: string;
   status: "success" | "error" | "pending";
+  warehouseIcon?: string;
 }
 
 interface DataLoggerProps {
@@ -37,26 +40,48 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
   const [syncInterval, setSyncInterval] = useState("30");
   const [searchQuery, setSearchQuery] = useState("");
 
+<<<<<<< Updated upstream
   // Sample log data - SHT20 & MQ135 Sensors Only
   const [logEntries] = useState<LogEntry[]>([
     {
       id: "1",
       sensorName: "Temperature (SHT20)",
+=======
+  // Sample log data - 6 sensors dari 3 gudang
+  const [logEntries] = useState<LogEntry[]>([
+    {
+      id: "1",
+      warehouseName: "Gudang Utama",
+      sensorType: "temperature",
+      sensorName: "Suhu Gudang Utama",
+>>>>>>> Stashed changes
       value: 27.5,
       unit: "°C",
-      timestamp: "2024-06-20 17:45:00",
+      timestamp: "2024-06-21 14:45:00",
       status: "success",
+      warehouseIcon: "thermometer",
     },
     {
       id: "2",
+<<<<<<< Updated upstream
       sensorName: "Humidity (SHT20)",
       value: 65,
       unit: "%",
       timestamp: "2024-06-20 17:44:58",
+=======
+      warehouseName: "Gudang Utama",
+      sensorType: "gas",
+      sensorName: "Gas Gudang Utama",
+      value: 42,
+      unit: "ppm",
+      timestamp: "2024-06-21 14:44:58",
+>>>>>>> Stashed changes
       status: "success",
+      warehouseIcon: "cloud",
     },
     {
       id: "3",
+<<<<<<< Updated upstream
       sensorName: "Gas Level (MQ135)",
       value: 42,
       unit: "ppm",
@@ -69,15 +94,57 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
       value: 27.3,
       unit: "°C",
       timestamp: "2024-06-20 17:44:30",
+=======
+      warehouseName: "Gudang Cabang",
+      sensorType: "temperature",
+      sensorName: "Suhu Gudang Cabang",
+      value: 26.8,
+      unit: "°C",
+      timestamp: "2024-06-21 14:44:55",
       status: "success",
+      warehouseIcon: "thermometer",
+    },
+    {
+      id: "4",
+      warehouseName: "Gudang Cabang",
+      sensorType: "gas",
+      sensorName: "Gas Gudang Cabang",
+      value: 38,
+      unit: "ppm",
+      timestamp: "2024-06-21 14:44:52",
+>>>>>>> Stashed changes
+      status: "success",
+      warehouseIcon: "cloud",
     },
     {
       id: "5",
+<<<<<<< Updated upstream
       sensorName: "Humidity (SHT20)",
       value: 64,
       unit: "%",
       timestamp: "2024-06-20 17:44:15",
       status: "success",
+=======
+      warehouseName: "Gudang Distribusi",
+      sensorType: "temperature",
+      sensorName: "Suhu Gudang Distribusi",
+      value: 28.2,
+      unit: "°C",
+      timestamp: "2024-06-21 14:44:30",
+      status: "pending",
+      warehouseIcon: "thermometer",
+    },
+    {
+      id: "6",
+      warehouseName: "Gudang Distribusi",
+      sensorType: "gas",
+      sensorName: "Gas Gudang Distribusi",
+      value: 45,
+      unit: "ppm",
+      timestamp: "2024-06-21 14:44:28",
+      status: "pending",
+      warehouseIcon: "cloud",
+>>>>>>> Stashed changes
     },
   ]);
 
@@ -117,23 +184,45 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
         },
       ]}
     >
+      <View style={styles.logStatusIndicator}>
+        <Ionicons
+          name={getStatusIcon(item.status) as any}
+          size={20}
+          color={getStatusColor(item.status)}
+        />
+      </View>
       <View style={styles.logContent}>
         <View style={styles.logHeader}>
-          <Text
-            style={[
-              styles.sensorName,
-              {
-                color: isDark ? "#e0e0e0" : "#333333",
-              },
-            ]}
-          >
-            {item.sensorName}
-          </Text>
-          <Ionicons
-            name={getStatusIcon(item.status) as any}
-            size={18}
-            color={getStatusColor(item.status)}
-          />
+          <View style={styles.logTitleSection}>
+            <Ionicons
+              name={(item.warehouseIcon as any) || "business"}
+              size={16}
+              color={colors.tint}
+              style={styles.warehouseIcon}
+            />
+            <View>
+              <Text
+                style={[
+                  styles.warehouseName,
+                  {
+                    color: isDark ? "#999999" : "#666666",
+                  },
+                ]}
+              >
+                {item.warehouseName}
+              </Text>
+              <Text
+                style={[
+                  styles.sensorName,
+                  {
+                    color: isDark ? "#e0e0e0" : "#333333",
+                  },
+                ]}
+              >
+                {item.sensorName}
+              </Text>
+            </View>
+          </View>
         </View>
         <View style={styles.logDetails}>
           <Text
@@ -141,6 +230,7 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
               styles.logValue,
               {
                 color: colors.tint,
+                fontWeight: "600",
               },
             ]}
           >
@@ -150,7 +240,7 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
             style={[
               styles.logTimestamp,
               {
-                color: isDark ? "#999999" : "#666666",
+                color: isDark ? "#666666" : "#999999",
               },
             ]}
           >
@@ -195,7 +285,7 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
             },
           ]}
         >
-          Data Logger
+          Data Logger Gudang
         </Text>
         <TouchableOpacity>
           <Ionicons
@@ -226,7 +316,7 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
                 },
               ]}
             >
-              Settings
+              ⚙️ Pengaturan Logging
             </Text>
 
             {/* Logging Toggle */}
@@ -247,7 +337,7 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
                       },
                     ]}
                   >
-                    Data Logging
+                    Logging Data Sensor
                   </Text>
                   <Text
                     style={[
@@ -257,7 +347,7 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
                       },
                     ]}
                   >
-                    Record sensor readings
+                    Catat semua pembacaan sensor gudang
                   </Text>
                 </View>
               </View>
@@ -286,7 +376,7 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
                       },
                     ]}
                   >
-                    Auto Sync to Cloud
+                    Sinkronisasi Otomatis
                   </Text>
                   <Text
                     style={[
@@ -296,7 +386,7 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
                       },
                     ]}
                   >
-                    Sync with Firebase Firestore
+                    Sinkron data ke Firebase Firestore
                   </Text>
                 </View>
               </View>
@@ -325,7 +415,7 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
                       },
                     ]}
                   >
-                    Sync Interval (seconds)
+                    Interval Sinkronisasi (detik)
                   </Text>
                 </View>
                 <TextInput
@@ -484,10 +574,14 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
               },
             ]}
           >
-            Recent Logs
+            📋 Log Terbaru
           </Text>
           <FlatList
-            data={logEntries}
+          data={logEntries.filter(
+          (log) =>
+            log.warehouseName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            log.sensorName.toLowerCase().includes(searchQuery.toLowerCase())
+          )}
             renderItem={renderLogItem}
             keyExtractor={(item) => item.id}
             scrollEnabled={false}
@@ -518,7 +612,7 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
                   },
                 ]}
               >
-                Firebase Integration
+                Integrasi Firebase
               </Text>
               <Text
                 style={[
@@ -528,8 +622,8 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
                   },
                 ]}
               >
-                Configure Node.js Admin SDK to connect with Firestore. Use the
-                logs to sync sensor data automatically.
+                Data dari 6 sensor (3 gudang) akan tersinkronisasi secara
+                otomatis ke Firestore untuk penyimpanan jangka panjang.
               </Text>
             </View>
           </View>
@@ -658,14 +752,35 @@ const styles = StyleSheet.create({
     padding: 12,
     marginBottom: 8,
     borderWidth: 1,
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 10,
+  },
+  logStatusIndicator: {
+    paddingTop: 2,
   },
   logContent: {
     gap: 8,
+    flex: 1,
   },
   logHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "flex-start",
+  },
+  logTitleSection: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 8,
+    flex: 1,
+  },
+  warehouseIcon: {
+    marginTop: 2,
+  },
+  warehouseName: {
+    fontSize: 11,
+    fontWeight: "500",
+    marginBottom: 2,
   },
   sensorName: {
     fontSize: 14,
@@ -674,7 +789,7 @@ const styles = StyleSheet.create({
   logDetails: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingLeft: 4,
+    alignItems: "center",
   },
   logValue: {
     fontSize: 13,
