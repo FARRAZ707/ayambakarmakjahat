@@ -9,11 +9,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-<<<<<<< Updated upstream
-  View,
-=======
   View
->>>>>>> Stashed changes
 } from "react-native";
 import { SensorCard } from "./sensor-card";
 import { SensorChart } from "./sensor-chart";
@@ -59,13 +55,6 @@ export function Dashboard({
   const [activeSensor, setActiveSensor] = useState<string | undefined>();
   const scrollViewRef = useRef<ScrollView>(null);
 
-<<<<<<< Updated upstream
-  // Sample sensor data - SHT20 & MQ135 Sensors Only
-  const [sensorData] = useState<SensorData[]>([
-    {
-      id: "1",
-      name: "Temperature (SHT20)",
-=======
   // Warehouse data - 3 lokasi gudang
   const [warehouses] = useState<Warehouse[]>([
     {
@@ -99,7 +88,6 @@ export function Dashboard({
     {
       id: "S1",
       name: "Suhu Gudang Utama",
->>>>>>> Stashed changes
       value: 27.5,
       unit: "°C",
       icon: "thermometer",
@@ -108,29 +96,16 @@ export function Dashboard({
       warehouseId: "WH1",
     },
     {
-<<<<<<< Updated upstream
-      id: "2",
-      name: "Humidity (SHT20)",
-      value: 65,
-      unit: "%",
-      icon: "water",
-=======
       id: "S2",
       name: "Gas Gudang Utama",
       value: 42,
       unit: "ppm",
       icon: "cloud",
->>>>>>> Stashed changes
       status: "good",
       lastUpdate: "2 min ago",
       warehouseId: "WH1",
     },
     {
-<<<<<<< Updated upstream
-      id: "3",
-      name: "Gas Level (MQ135)",
-      value: 42,
-=======
       id: "S3",
       name: "Suhu Gudang Cabang",
       value: 26.8,
@@ -144,15 +119,12 @@ export function Dashboard({
       id: "S4",
       name: "Gas Gudang Cabang",
       value: 38,
->>>>>>> Stashed changes
       unit: "ppm",
       icon: "cloud",
       status: "good",
       lastUpdate: "1 min ago",
       warehouseId: "WH2",
     },
-<<<<<<< Updated upstream
-=======
     {
       id: "S5",
       name: "Suhu Gudang Distribusi",
@@ -173,7 +145,6 @@ export function Dashboard({
       lastUpdate: "3 min ago",
       warehouseId: "WH3",
     },
->>>>>>> Stashed changes
   ]);
 
   // Chart data sample - untuk 3 gudang
@@ -423,11 +394,7 @@ export function Dashboard({
               datasets={[
                 {
                   label: "Temperature",
-<<<<<<< Updated upstream
-                  data: temperatureData,
-=======
                   data: warehouseTemperatureData[0],
->>>>>>> Stashed changes
                   color: "#ff6b6b",
                 },
               ]}
@@ -440,13 +407,8 @@ export function Dashboard({
               labels={chartLabels}
               datasets={[
                 {
-<<<<<<< Updated upstream
-                  label: "Humidity",
-                  data: humidityData,
-=======
                   label: "Temperature",
                   data: warehouseTemperatureData[1],
->>>>>>> Stashed changes
                   color: "#4ecdc4",
                 },
               ]}
@@ -587,11 +549,7 @@ export function Dashboard({
                     },
                   ]}
                 >
-<<<<<<< Updated upstream
-                  3
-=======
                   6
->>>>>>> Stashed changes
                 </Text>
                 <Text
                   style={[
@@ -622,11 +580,7 @@ export function Dashboard({
                     },
                   ]}
                 >
-<<<<<<< Updated upstream
-                  0
-=======
                   2
->>>>>>> Stashed changes
                 </Text>
                 <Text
                   style={[

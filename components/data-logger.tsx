@@ -40,13 +40,6 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
   const [syncInterval, setSyncInterval] = useState("30");
   const [searchQuery, setSearchQuery] = useState("");
 
-<<<<<<< Updated upstream
-  // Sample log data - SHT20 & MQ135 Sensors Only
-  const [logEntries] = useState<LogEntry[]>([
-    {
-      id: "1",
-      sensorName: "Temperature (SHT20)",
-=======
   // Sample log data - 6 sensors dari 3 gudang
   const [logEntries] = useState<LogEntry[]>([
     {
@@ -54,7 +47,6 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
       warehouseName: "Gudang Utama",
       sensorType: "temperature",
       sensorName: "Suhu Gudang Utama",
->>>>>>> Stashed changes
       value: 27.5,
       unit: "°C",
       timestamp: "2024-06-21 14:45:00",
@@ -63,38 +55,17 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
     },
     {
       id: "2",
-<<<<<<< Updated upstream
-      sensorName: "Humidity (SHT20)",
-      value: 65,
-      unit: "%",
-      timestamp: "2024-06-20 17:44:58",
-=======
       warehouseName: "Gudang Utama",
       sensorType: "gas",
       sensorName: "Gas Gudang Utama",
       value: 42,
       unit: "ppm",
       timestamp: "2024-06-21 14:44:58",
->>>>>>> Stashed changes
       status: "success",
       warehouseIcon: "cloud",
     },
     {
       id: "3",
-<<<<<<< Updated upstream
-      sensorName: "Gas Level (MQ135)",
-      value: 42,
-      unit: "ppm",
-      timestamp: "2024-06-20 17:44:55",
-      status: "success",
-    },
-    {
-      id: "4",
-      sensorName: "Temperature (SHT20)",
-      value: 27.3,
-      unit: "°C",
-      timestamp: "2024-06-20 17:44:30",
-=======
       warehouseName: "Gudang Cabang",
       sensorType: "temperature",
       sensorName: "Suhu Gudang Cabang",
@@ -112,19 +83,11 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
       value: 38,
       unit: "ppm",
       timestamp: "2024-06-21 14:44:52",
->>>>>>> Stashed changes
       status: "success",
       warehouseIcon: "cloud",
     },
     {
       id: "5",
-<<<<<<< Updated upstream
-      sensorName: "Humidity (SHT20)",
-      value: 64,
-      unit: "%",
-      timestamp: "2024-06-20 17:44:15",
-      status: "success",
-=======
       warehouseName: "Gudang Distribusi",
       sensorType: "temperature",
       sensorName: "Suhu Gudang Distribusi",
@@ -144,7 +107,6 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
       timestamp: "2024-06-21 14:44:28",
       status: "pending",
       warehouseIcon: "cloud",
->>>>>>> Stashed changes
     },
   ]);
 
