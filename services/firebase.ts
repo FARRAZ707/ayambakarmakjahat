@@ -10,13 +10,13 @@
 //update API KEY
 export const FIREBASE_CONFIG = {
   // Your Firebase configuration object from Firebase Console
-  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY || "",
-  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN || "",
-  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID || "",
-  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET || "",
-  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "",
-  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID || "",
-  measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID || "",
+  apiKey: "AIzaSyAwjoUvkG_oxdE61MmahX-4L4W2ICmU6fg",
+  authDomain: "ayambakarmakjahat.firebaseapp.com",
+  projectId: "ayambakarmakjahat",
+  storageBucket: "ayambakarmakjahat.firebasestorage.app",
+  messagingSenderId: "480019788970",
+  appId: "1:480019788970:web:f8c2c66100abee4ea14cd3",
+  measurementId: "G-F9M2ECE1GK"
 };
 
 /**

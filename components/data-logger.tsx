@@ -1,6 +1,7 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   FlatList,
@@ -249,9 +250,9 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
         >
           Data Logger Gudang
         </Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => router.navigate('/')} >
           <Ionicons
-            name="more-vertical"
+            name="ellipsis-vertical"
             size={24}
             color={isDark ? "#ffffff" : "#000000"}
           />
