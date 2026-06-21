@@ -2,8 +2,10 @@ import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Ionicons } from "@expo/vector-icons";
 import Constants from "expo-constants";
+import { router } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
+  Alert,
   RefreshControl,
   SafeAreaView,
   ScrollView,
@@ -231,7 +233,35 @@ export function Dashboard({
         setSidebarOpen(false);
       },
     },
-
+    {
+      id: "logout",
+      label: "Keluar (Logout)",
+      icon: "log-out", // Ikon pintu keluar bawaan Ionicons
+      onPress: () => {
+        // Memunculkan pop-up konfirmasi sebelum benar-benar keluar
+        Alert.alert(
+          "Konfirmasi Logout",
+          "Apakah Anda yakin ingin keluar dari sistem Smart Storage?",
+          [
+            { 
+              text: "Batal", 
+              style: "cancel" 
+            },
+            {
+              text: "Ya, Keluar",
+              style: "destructive", // Memberikan warna merah pada tombol (di iOS)
+              onPress: () => {
+                // Menutup sidebar (jika ada state setSidebarOpen)
+                // setSidebarOpen(false); 
+                
+                // Menghancurkan sesi dashboard dan kembali ke halaman Login (index.tsx)
+                router.replace("/");
+              },
+            },
+          ]
+        );
+      },
+    },
   ];
 
   const handleRefresh = async () => {

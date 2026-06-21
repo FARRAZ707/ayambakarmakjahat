@@ -4,6 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
+  Alert,
   FlatList,
   SafeAreaView,
   ScrollView,
@@ -12,7 +13,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 
 interface LogEntry {
@@ -23,7 +24,7 @@ interface LogEntry {
   value: number;
   unit: string;
   timestamp: string;
-  status: "success" | "error" | "pending";
+  status: "success" | "error" | "pending" | "critical";
   warehouseIcon?: string;
 }
 
@@ -42,7 +43,7 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   // Sample log data - 6 sensors dari 3 gudang
-  const [logEntries] = useState<LogEntry[]>([
+  const [logEntries, setLogEntries] = useState<LogEntry[]>([
     {
       id: "1",
       warehouseName: "Gudang Utama",
@@ -119,6 +120,8 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
         return "#f44336";
       case "pending":
         return "#ff9800";
+      case "critical":
+        return "#d32f2f";
       default:
         return "#999999";
     }
@@ -132,6 +135,8 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
         return "close-circle";
       case "pending":
         return "time";
+      case "critical":
+        return "warning";
       default:
         return "help-circle";
     }
@@ -214,6 +219,71 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
     </View>
   );
 
+// --- TAMBAHKAN FUNGSI INI SEBELUM return (...) ---
+  const handleMenuOptions = () => {
+    Alert.alert(
+      "Opsi Data Logger",
+      "Pilih tindakan pengujian sistem:",
+      [
+        {
+          text: "➕ Simulasikan Data Baru",
+          onPress: () => {
+            // 1. Dapatkan nilai suhu acak antara 25.0 sampai 35.0 °C
+            const randomValue = parseFloat((Math.random() * (35 - 25) + 25).toFixed(1));
+            
+            // 2. LOGIKA EWS: Tentukan batas aman (misal suhu maksimal 30.0 °C)
+            const thresholdSuhu = 30.0;
+            const isCritical = randomValue > thresholdSuhu;
+
+            // 3. Buat data log baru dengan status dinamis
+            const newLog: LogEntry = {
+              id: Date.now().toString(),
+              warehouseName: "Gudang Utama",
+              sensorType: "temperature",
+              sensorName: "Suhu Gudang Utama",
+              value: randomValue,
+              unit: "°C",
+              timestamp: new Date().toLocaleString('sv-SE').replace('T', ' '),
+              // Jika melebihi batas, status otomatis menjadi 'critical' (warna merah)
+              status: isCritical ? "critical" : "success", 
+              warehouseIcon: "thermometer",
+            };
+
+            // 4. Masukkan ke dalam daftar layar
+            setLogEntries([newLog, ...logEntries]);
+
+            // 5. PEMICU NOTIFIKASI PERINGATAN DINI
+            if (isCritical) {
+              // Diberi jeda 500ms agar data log memunculkan warna merah dulu di layar, baru notifikasi muncul
+              setTimeout(() => {
+                Alert.alert(
+                  "⚠️ PERINGATAN DINI (EWS)",
+                  `Sistem mendeteksi parameter lingkungan di luar batas aman!\n\n` +
+                  `• Lokasi: Gudang Utama\n` +
+                  `• Parameter: Pembacaan Suhu\n` +
+                  `• Nilai: ${randomValue} °C (Batas aman: ${thresholdSuhu} °C)\n` +
+                  `• Status: CRITICAL`,
+                  [{ text: "Respons Bahaya", style: "destructive" }]
+                );
+              }, 500);
+            }
+          },
+        },
+        {
+          text: "🗑️ Bersihkan Semua Log",
+          onPress: () => {
+            setLogEntries([]);
+          },
+          style: "destructive",
+        },
+        {
+          text: "Batal",
+          style: "cancel",
+        },
+      ]
+    );
+  };
+  
   return (
     <SafeAreaView
       style={[
@@ -233,30 +303,48 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
           },
         ]}
       >
-        <TouchableOpacity onPress={() => router.navigate('/')} >
-          <Ionicons
-            name="chevron-back"
-            size={28}
-            color={isDark ? "#ffffff" : "#000000"}
-          />
-        </TouchableOpacity>
-        <Text
-          style={[
-            styles.headerTitle,
-            {
-              color: isDark ? "#ffffff" : "#000000",
-            },
-          ]}
-        >
-          Data Logger Gudang
+        <View style={styles.headerTopRow}>
+          <View style={styles.headerTitleContainer}>
+            {/* Tombol Back yang seragam */}
+            <TouchableOpacity 
+              onPress={() => router.navigate('/')} 
+              style={{ paddingRight: 12, paddingVertical: 4 }}
+            >
+              <Ionicons
+                name="arrow-back"
+                size={24}
+                color={isDark ? "#ffffff" : "#000000"}
+              />
+            </TouchableOpacity>
+            
+            {/* Ikon dan Judul */}
+            <Ionicons name="document-text" size={24} color={isDark ? "#ffffff" : "#000000"} />
+            <Text
+              style={[
+                styles.headerTitle,
+                {
+                  color: isDark ? "#ffffff" : "#000000",
+                },
+              ]}
+            >
+              Data Logger Gudang
+            </Text>
+          </View>
+
+          {/* Tombol Opsi Tambahan (Titik 3) */}
+          <TouchableOpacity onPress={handleMenuOptions}>
+            <Ionicons
+              name="ellipsis-vertical"
+              size={24}
+              color={isDark ? "#ffffff" : "#000000"}
+            />
+          </TouchableOpacity>
+        </View>
+
+        {/* Subtitle baru */}
+        <Text style={[styles.headerSubtitle, { color: isDark ? "#999999" : "#666666", marginLeft: 44 }]}>
+          Riwayat Sensor & Sinkronisasi Cloud
         </Text>
-        <TouchableOpacity onPress={() => router.navigate('/')} >
-          <Ionicons
-            name="ellipsis-vertical"
-            size={24}
-            color={isDark ? "#ffffff" : "#000000"}
-          />
-        </TouchableOpacity>
       </View>
 
       <ScrollView style={styles.scrollView}>
@@ -603,18 +691,28 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+  },
+  headerTopRow: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
     justifyContent: "space-between",
+  },
+  headerTitleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    flex: 1,
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    flex: 1,
-    textAlign: "center",
+  },
+  headerSubtitle: {
+    fontSize: 13,
+    marginTop: 4,
   },
   scrollView: {
     flex: 1,

@@ -19,7 +19,7 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="dashboard"
         options={{
           title: "Home",
           tabBarIcon: ({ color }) => (
@@ -36,8 +36,10 @@ export default function TabLayout() {
           ),
         }}
       />
+      
+      {/* UBAH BAGIAN INI: Ganti "explore" menjadi "data-logger" */}
       <Tabs.Screen
-        name="explore"
+        name="data-logger" 
         options={{
           title: "Data Logger",
           tabBarIcon: ({ color, focused }) => (
