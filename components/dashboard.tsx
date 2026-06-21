@@ -1,6 +1,7 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Ionicons } from "@expo/vector-icons";
+import Constants from "expo-constants";
 import React, { useRef, useState } from "react";
 import {
   RefreshControl,
@@ -54,6 +55,15 @@ export function Dashboard({
   const [refreshing, setRefreshing] = useState(false);
   const [activeSensor, setActiveSensor] = useState<string | undefined>();
   const scrollViewRef = useRef<ScrollView>(null);
+
+  const expoConstants = Constants as unknown as {
+    expoConfig?: { extra?: { googleMapsApiKey?: string } };
+    manifest?: { extra?: { googleMapsApiKey?: string } };
+  };
+  const googleApiKey =
+    expoConstants.expoConfig?.extra?.googleMapsApiKey ||
+    expoConstants.manifest?.extra?.googleMapsApiKey ||
+    process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY;
 
   // Warehouse data - 3 lokasi gudang
   const [warehouses] = useState<Warehouse[]>([
@@ -181,7 +191,7 @@ export function Dashboard({
       icon: "map",
       onPress: () => {
         setActiveSensor("map");
-        scrollViewRef.current?.scrollToEnd({ animated: true });
+        scrollViewRef.current?.scrollTo({ y:0, animated: true });
         setSidebarOpen(false);
       },
     },
@@ -192,7 +202,7 @@ export function Dashboard({
       onPress: () => {
         setActiveSensor("sensors");
         if (scrollViewRef.current) {
-          scrollViewRef.current.scrollTo({ y: 350, animated: true });
+          scrollViewRef.current.scrollTo({ y: 450, animated: true });
         }
         setSidebarOpen(false);
       },
@@ -204,7 +214,7 @@ export function Dashboard({
       onPress: () => {
         setActiveSensor("trends");
         if (scrollViewRef.current) {
-          scrollViewRef.current.scrollTo({ y: 900, animated: true });
+          scrollViewRef.current.scrollTo({ y: 1430, animated: true });
         }
         setSidebarOpen(false);
       },
@@ -216,31 +226,12 @@ export function Dashboard({
       onPress: () => {
         setActiveSensor("gas");
         if (scrollViewRef.current) {
-          scrollViewRef.current.scrollTo({ y: 1600, animated: true });
+          scrollViewRef.current.scrollTo({ y: 2460, animated: true });
         }
         setSidebarOpen(false);
       },
     },
-    {
-      id: "data-logger",
-      label: "Data Logger",
-      icon: "document-text",
-      onPress: () => {
-        setActiveSensor("data-logger");
-        onNavigateToLogger?.();
-        setSidebarOpen(false);
-      },
-    },
-    {
-      id: "settings",
-      label: "Settings",
-      icon: "settings",
-      onPress: () => {
-        setActiveSensor("settings");
-        onNavigateToSettings?.();
-        setSidebarOpen(false);
-      },
-    },
+
   ];
 
   const handleRefresh = async () => {
@@ -347,7 +338,7 @@ export function Dashboard({
             >
               Lokasi Gudang
             </Text>
-            <WarehouseMap warehouses={warehouses} />
+            <WarehouseMap warehouses={warehouses} googleApiKey={googleApiKey} />
           </View>
 
           {/* Status Cards */}

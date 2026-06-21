@@ -1,7 +1,15 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import Constants from "expo-constants";
 import React from "react";
-import { Platform, StyleSheet, Text, View } from "react-native";
+import {
+    Image,
+    Platform,
+    StyleSheet,
+    Text,
+    View,
+} from "react-native";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 
 interface Warehouse {
   id: string;
@@ -14,90 +22,23 @@ interface Warehouse {
 
 interface WarehouseMapProps {
   warehouses: Warehouse[];
-  mapboxApiKey?: string; // Optional: untuk Mapbox tile layer
+  googleApiKey?: string;
 }
 
-// ========== LEAFLET API KEY INFORMATION ==========
-// PENTING: OpenStreetMap (saat ini) GRATIS dan TIDAK memerlukan API Key!
-//
-// ⚠️ EXPO GO LIMITATION:
-// - Leaflet HANYA tersedia di WEB (tidak support di Expo Go untuk Android/iOS)
-// - Di Expo Go, komponen akan menampilkan placeholder text
-// - Untuk mobile native, gunakan: react-native-maps atau expo-map-view
-//
-// JIKA INGIN MENGGUNAKAN PROVIDER LAIN (Mapbox, dll):
-// 1. Daftar di https://www.mapbox.com/
-// 2. Dapatkan Mapbox API key
-// 3. Pass ke component: <WarehouseMap warehouses={warehouses} mapboxApiKey="YOUR_KEY" />
-// 4. Uncomment TileLayer Mapbox di bawah (line ~130)
-// ================================================
-
-// Leaflet is web-only, so we export a web component
-let MapContainer: any;
-let TileLayer: any;
-let Marker: any;
-let Popup: any;
-
-if (Platform.OS === "web") {
-  try {
-    const leaflet = require("react-leaflet");
-    MapContainer = leaflet.MapContainer;
-    TileLayer = leaflet.TileLayer;
-    Marker = leaflet.Marker;
-    Popup = leaflet.Popup;
-  } catch (e) {
-    console.log("Leaflet not available");
-  }
-}
-
-export function WarehouseMap({ warehouses, mapboxApiKey }: WarehouseMapProps) {
+export function WarehouseMap({ warehouses, googleApiKey }: WarehouseMapProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const colors = Colors[colorScheme ?? "light"];
 
-  if (Platform.OS !== "web") {
-    return (
-      <View
-        style={[
-          styles.container,
-          {
-            backgroundColor: isDark ? "#222222" : "#ffffff",
-            borderColor: isDark ? "#333333" : "#e0e0e0",
-          },
-        ]}
-      >
-        <Text
-          style={[
-            styles.title,
-            {
-              color: isDark ? "#e0e0e0" : "#333333",
-            },
-          ]}
-        >
-          Peta Gudang
-        </Text>
-        <Text
-          style={[
-            styles.message,
-            {
-              color: isDark ? "#999999" : "#666666",
-            },
-          ]}
-        >
-          Peta hanya tersedia di versi WEB
-        </Text>
-        <Text
-          style={[
-            styles.helpText,
-            {
-              color: isDark ? "#888888" : "#777777",
-            },
-          ]}
-        >
-        </Text>
-      </View>
-    );
-  }
+  const expoConstants = Constants as unknown as {
+    expoConfig?: { extra?: { googleMapsApiKey?: string } };
+    manifest?: { extra?: { googleMapsApiKey?: string } };
+  };
+  const key =
+    googleApiKey ||
+    expoConstants.expoConfig?.extra?.googleMapsApiKey ||
+    expoConstants.manifest?.extra?.googleMapsApiKey ||
+    process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY;
 
   // Default center (Indonesia)
   const defaultCenter: [number, number] = [-6.2088, 106.8456];
@@ -110,7 +51,49 @@ export function WarehouseMap({ warehouses, mapboxApiKey }: WarehouseMapProps) {
       ? warehouses.reduce((sum, w) => sum + w.longitude, 0) / warehouses.length
       : defaultCenter[1];
 
-  if (!MapContainer) {
+  if (Platform.OS === "web") {
+    if (!key) {
+      return (
+        <View
+          style={[
+            styles.container,
+            {
+              backgroundColor: isDark ? "#222222" : "#ffffff",
+              borderColor: isDark ? "#333333" : "#e0e0e0",
+            },
+          ]}
+        >
+          <Text
+            style={[
+              styles.title,
+              {
+                color: isDark ? "#e0e0e0" : "#333333",
+              },
+            ]}
+          >
+            Peta Gudang
+          </Text>
+          <Text
+            style={[
+              styles.message,
+              {
+                color: isDark ? "#999999" : "#666666",
+              },
+            ]}
+          >
+            Untuk menampilkan peta di web diperlukan Google Maps API Key.
+          </Text>
+        </View>
+      );
+    }
+
+    const markers = warehouses
+      .map((w) => `markers=color:red%7C${w.latitude},${w.longitude}`)
+      .join("&");
+    const url = `https://maps.googleapis.com/maps/api/staticmap?center=${centerLat},${centerLng}&zoom=12&size=640x300&${markers}&key=${encodeURIComponent(
+      key,
+    )}`;
+
     return (
       <View
         style={[
@@ -131,19 +114,18 @@ export function WarehouseMap({ warehouses, mapboxApiKey }: WarehouseMapProps) {
         >
           Peta Gudang
         </Text>
-        <Text
-          style={[
-            styles.message,
-            {
-              color: isDark ? "#999999" : "#666666",
-            },
-          ]}
-        >
-          Loading peta...
-        </Text>
+        <Image source={{ uri: url }} style={styles.map} />
       </View>
     );
   }
+
+  // Native (iOS/Android) - use react-native-maps with Google provider
+  const initialRegion = {
+    latitude: centerLat,
+    longitude: centerLng,
+    latitudeDelta: 0.1,
+    longitudeDelta: 0.1,
+  };
 
   return (
     <View
@@ -166,46 +148,20 @@ export function WarehouseMap({ warehouses, mapboxApiKey }: WarehouseMapProps) {
         Peta Gudang
       </Text>
       <View style={styles.mapContainer}>
-        <MapContainer
-          center={[centerLat, centerLng]}
-          zoom={12}
+        <MapView
+          provider={PROVIDER_GOOGLE}
+          initialRegion={initialRegion}
           style={styles.map}
         >
-          {/* OpenStreetMap - Gratis, tidak butuh API key */}
-          {!mapboxApiKey ? (
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-          ) : (
-            /* Mapbox - Butuh API key dari https://www.mapbox.com/ */
-            <TileLayer
-              attribution='&copy; <a href="https://www.mapbox.com/">Mapbox</a> | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-              url={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/{x}/{y}/{z}/1280x720?access_token=${mapboxApiKey}`}
-            />
-          )}
-          {warehouses.map((warehouse) => (
+          {warehouses.map((w) => (
             <Marker
-              key={warehouse.id}
-              position={[warehouse.latitude, warehouse.longitude]}
-            >
-              <Popup>
-                <div style={{ textAlign: "center" }}>
-                  <strong>{warehouse.name}</strong>
-                  <br />
-                  <div style={{ marginTop: "8px", fontSize: "12px" }}>
-                    <div>
-                      🌡️ Suhu: <strong>{warehouse.temperature}°C</strong>
-                    </div>
-                    <div>
-                      💨 Gas: <strong>{warehouse.gas} ppm</strong>
-                    </div>
-                  </div>
-                </div>
-              </Popup>
-            </Marker>
+              key={w.id}
+              coordinate={{ latitude: w.latitude, longitude: w.longitude }}
+              title={w.name}
+              description={`Suhu: ${w.temperature}°C • Gas: ${w.gas} ppm`}
+            />
           ))}
-        </MapContainer>
+        </MapView>
       </View>
     </View>
   );

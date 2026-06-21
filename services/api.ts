@@ -1,3 +1,5 @@
+import axios, { AxiosInstance } from "axios";
+
 /**
  * API Service for IoT Dashboard
  *
@@ -7,6 +9,13 @@
 
 const API_BASE_URL =
   process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000/api";
+
+const apiClient: AxiosInstance = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
 interface ApiResponse<T> {
   success: boolean;
@@ -33,21 +42,18 @@ export const sensorApi = {
     data: SensorDataPayload,
   ): Promise<ApiResponse<any>> => {
     try {
-      const response = await fetch(`${API_BASE_URL}/sensor-data`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-      return result;
+      const response = await apiClient.post("/sensor-data", data);
+      return response.data;
     } catch (error) {
       console.error("Error saving sensor data:", error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
+        error:
+          axios.isAxiosError(error) && error.response?.data?.error
+            ? String(error.response.data.error)
+            : error instanceof Error
+            ? error.message
+            : "Unknown error",
       };
     }
   },
@@ -60,23 +66,20 @@ export const sensorApi = {
     limit: number = 100,
   ): Promise<ApiResponse<any[]>> => {
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/sensor-logs/${sensorName}?limit=${limit}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
-
-      const result = await response.json();
-      return result;
+      const response = await apiClient.get(`/sensor-logs/${sensorName}`, {
+        params: { limit },
+      });
+      return response.data;
     } catch (error) {
       console.error("Error fetching sensor logs:", error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
+        error:
+          axios.isAxiosError(error) && error.response?.data?.error
+            ? String(error.response.data.error)
+            : error instanceof Error
+            ? error.message
+            : "Unknown error",
         data: [],
       };
     }
@@ -87,20 +90,18 @@ export const sensorApi = {
    */
   getSensorSummary: async (): Promise<ApiResponse<any>> => {
     try {
-      const response = await fetch(`${API_BASE_URL}/sensor-summary`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      const result = await response.json();
-      return result;
+      const response = await apiClient.get("/sensor-summary");
+      return response.data;
     } catch (error) {
       console.error("Error fetching sensor summary:", error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
+        error:
+          axios.isAxiosError(error) && error.response?.data?.error
+            ? String(error.response.data.error)
+            : error instanceof Error
+            ? error.message
+            : "Unknown error",
       };
     }
   },
@@ -110,20 +111,18 @@ export const sensorApi = {
    */
   syncPendingLogs: async (): Promise<ApiResponse<{ synced: number }>> => {
     try {
-      const response = await fetch(`${API_BASE_URL}/sync-logs`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      const result = await response.json();
-      return result;
+      const response = await apiClient.post("/sync-logs");
+      return response.data;
     } catch (error) {
       console.error("Error syncing logs:", error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
+        error:
+          axios.isAxiosError(error) && error.response?.data?.error
+            ? String(error.response.data.error)
+            : error instanceof Error
+            ? error.message
+            : "Unknown error",
       };
     }
   },
@@ -135,21 +134,18 @@ export const sensorApi = {
     daysOld: number = 30,
   ): Promise<ApiResponse<{ deleted: number }>> => {
     try {
-      const response = await fetch(`${API_BASE_URL}/delete-old-logs`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ daysOld }),
-      });
-
-      const result = await response.json();
-      return result;
+      const response = await apiClient.post("/delete-old-logs", { daysOld });
+      return response.data;
     } catch (error) {
       console.error("Error deleting old logs:", error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
+        error:
+          axios.isAxiosError(error) && error.response?.data?.error
+            ? String(error.response.data.error)
+            : error instanceof Error
+            ? error.message
+            : "Unknown error",
       };
     }
   },

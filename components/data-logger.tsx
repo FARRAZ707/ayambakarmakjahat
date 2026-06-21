@@ -232,7 +232,7 @@ export function DataLogger({ onBackPress }: DataLoggerProps) {
           },
         ]}
       >
-        <TouchableOpacity onPress={onBackPress}>
+        <TouchableOpacity onPress={() => router.navigate('/')} >
           <Ionicons
             name="chevron-back"
             size={28}

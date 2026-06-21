@@ -23,13 +23,16 @@
       "predictiveBackGestureEnabled": false,
       "config": {
         "googleMaps": {
-          "apiKey": "MASUKKAN_API_KEY_GOOGLE_MAPS_ANDA_DI_SINI"
+          "apiKey": "AIzaSyB0cAIZssAaPDzacDBMJRbkudt0QTc8Ot0"
         }
       }
     },
     "web": {
       "output": "static",
       "favicon": "./assets/images/favicon.png"
+    },
+    "extra": {
+      "mapboxApiKey": "AIzaSyB0cAIZssAaPDzacDBMJRbkudt0QTc8Ot0"
     },
     "plugins": [
       "expo-router",

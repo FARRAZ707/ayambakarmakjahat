@@ -131,6 +131,9 @@ EXPO_PUBLIC_API_URL=http://localhost:3000/api
 # Firebase (untuk future use dengan SDK Web)
 EXPO_PUBLIC_FIREBASE_API_KEY=your_api_key
 EXPO_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+
+# Google Maps API key untuk peta gudang
+EXPO_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
 ```
 
 ## 🎨 Customization
