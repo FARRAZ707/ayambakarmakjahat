@@ -1,4 +1,4 @@
-# 📊 IoT Dashboard — Ayam Bakar Mak Jahat
+# 📊 IoT Dashboard — Smart Storage
 
 Aplikasi mobile **IoT Dashboard** berbasis React Native (Expo) untuk memantau data sensor secara real-time, dilengkapi grafik tren, data logger, dan integrasi backend Firebase Firestore.
 
