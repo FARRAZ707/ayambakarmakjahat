@@ -1,50 +1,152 @@
-# Welcome to your Expo app 👋
+# 📊 IoT Dashboard — Ayam Bakar Mak Jahat
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Aplikasi mobile **IoT Dashboard** berbasis React Native (Expo) untuk memantau data sensor secara real-time, dilengkapi grafik tren, data logger, dan integrasi backend Firebase Firestore.
 
-## Get started
+Proyek ini dibuat sebagai **Tugas Besar (TUBES) Mata Kuliah Mobile Computing**.
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## 👥 Anggota Kelompok
 
-2. Start the app
+| Nama | NIM | Peran |
+|------|-----|-------|
+| Farras Risqy Setiawan | 0923040045 | UI/UX |
+| Bayu Trio Apriliawan | 0923040033 | Axios (Integrasi API) |
+| Dwi Putra Aprilana | 0923040040 | Database |
 
-   ```bash
-   npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+## ✨ Fitur Utama
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- **Dashboard Interaktif** — kartu sensor real-time dengan indikator status, grafik tren (line & bar chart), statistik ringkasan, pull-to-refresh, serta dukungan dark mode & light mode.
+- **Sidebar Navigation** — navigasi ke Data Logger, Statistics, Alerts, dan Settings.
+- **Data Logger Management** — pencatatan log sensor, auto-sync ke Firebase Firestore, status sinkronisasi (Success/Pending/Error), pencarian & filter log.
+- **Sensor Cards** — tampilan data per sensor dengan status (Good/Warning/Critical), timestamp, dan unit otomatis.
+- **Sensor Charts** — visualisasi data sensor dalam bentuk line chart dan bar chart dengan multiple data series.
+- **Peta Lokasi** — integrasi peta (Google Maps / Leaflet) untuk visualisasi lokasi gudang/sensor.
+- **Backend Firebase** — REST API berbasis Node.js + Express + Firebase Admin SDK untuk menyimpan dan mengambil data sensor dari Firestore.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+---
 
-## Get a fresh project
+## 🛠️ Tech Stack
 
-When you're ready, run:
+**Frontend (Mobile App)**
+- [Expo](https://expo.dev) ~54
+- React Native 0.81
+- React 19 + TypeScript
+- Expo Router (file-based routing)
+- React Navigation (bottom tabs)
+- React Native Chart Kit + React Native SVG
+- React Native Maps & React Leaflet
+- Axios (HTTP client)
 
-```bash
-npm run reset-project
+**Backend**
+- Node.js + Express
+- Firebase Admin SDK
+- Firestore (database)
+
+---
+
+## 📁 Struktur Proyek
+
+```
+ayambakarmakjahat/
+├── app/                  # Routing & screens (Expo Router)
+│   └── (tabs)/
+│       ├── index.tsx     # Halaman utama - Dashboard
+│       ├── explore.tsx   # Data Logger
+│       └── _layout.tsx   # Tab navigation
+├── components/
+│   ├── dashboard.tsx     # Dashboard utama
+│   ├── sidebar.tsx       # Navigasi sidebar
+│   ├── data-logger.tsx   # Manajemen data logger
+│   ├── sensor-card.tsx   # Kartu sensor individual
+│   ├── sensor-chart.tsx  # Komponen grafik
+│   └── ui/               # Komponen UI pendukung
+├── services/
+│   ├── firebase.ts       # Konfigurasi Firebase
+│   └── api.ts            # Service API ke backend
+├── constants/             # Konstanta (tema, warna, dll)
+├── hooks/                 # Custom React hooks
+├── scripts/                # Script utilitas (reset project, dll)
+├── assets/images/          # Aset gambar
+├── FIREBASE_SETUP.md       # Panduan setup backend Firebase
+├── DASHBOARD_GUIDE.md      # Dokumentasi lengkap dashboard
+└── package.json
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+---
 
-## Learn more
+## 🚀 Cara Menjalankan
 
-To learn more about developing your project with Expo, look at the following resources:
+### Prasyarat
+- Node.js 14+
+- npm atau yarn
+- Akun Firebase dengan project aktif (untuk backend)
+- Expo Go (opsional, untuk testing cepat di HP)
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### 1. Clone repository
 
-## Join the community
+```bash
+git clone https://github.com/FARRAZ707/ayambakarmakjahat.git
+cd ayambakarmakjahat
+```
 
-Join our community of developers creating universal apps.
+### 2. Install dependencies
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```bash
+npm install
+```
+
+### 3. Konfigurasi environment
+
+Buat file `.env.local` (lihat contoh di `.env.local.example`):
+
+```env
+# Backend API
+EXPO_PUBLIC_API_URL=http://localhost:3000/api
+
+# Firebase (untuk future use dengan SDK Web)
+EXPO_PUBLIC_FIREBASE_API_KEY=your_api_key
+EXPO_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+
+# Google Maps API key untuk peta gudang
+EXPO_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
+```
+
+### 4. Jalankan aplikasi
+
+```bash
+npx expo start
+```
+
+Pilih platform yang diinginkan dari output terminal:
+- Android emulator / device
+- iOS simulator
+- Expo Go
+- Web browser
+
+### 5. Setup backend (opsional, untuk integrasi penuh)
+
+Backend Node.js + Firebase terpisah dari project Expo ini. Panduan lengkap setup backend (Firebase Admin SDK, Firestore, endpoint API) ada di [`FIREBASE_SETUP.md`](./FIREBASE_SETUP.md).
+
+---
+
+## 📖 Dokumentasi Tambahan
+
+- [`DASHBOARD_GUIDE.md`](./DASHBOARD_GUIDE.md) — dokumentasi lengkap fitur dashboard, komponen, kustomisasi, dan troubleshooting.
+- [`FIREBASE_SETUP.md`](./FIREBASE_SETUP.md) — panduan setup backend Node.js + Firebase Firestore.
+
+---
+
+## 📚 Referensi
+
+- [Dokumentasi Expo](https://docs.expo.dev/)
+- [React Native Chart Kit](https://github.com/indiespirit/react-native-chart-kit)
+- [Firebase Admin SDK](https://firebase.google.com/docs/database/admin/start)
+
+---
+
+## 📝 Lisensi
+
+Proyek ini dibuat untuk keperluan akademik (Tugas Besar Mata Kuliah Mobile Computing) dan tidak dimaksudkan untuk penggunaan komersial.
